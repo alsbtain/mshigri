@@ -8,6 +8,7 @@
   <link rel="stylesheet" media="all" href="theme/customize.css" type="text/css">
   <script type="text/javascript" charset="utf-8" src="phonegap.js"></script>
   <script type="text/javascript" charset="utf-8" src="settings.js"></script>
+  <script type="text/javascript" src="jwplayer/jwplayer.js"></script>
   <script type="text/javascript" src="js/PushNotification.js"></script>
   
   <script type="text/javascript">	
@@ -57,6 +58,8 @@
 <script type="text/javascript">
 
 	var pushNotification;
+	var mediaID;
+	var mediaIDs;
 	
 function onDeviceReady() {
 
@@ -75,12 +78,6 @@ function onDeviceReady() {
 }
 
     function checkConnection() {
-		if (navigator.connection.type == Connection.NONE){
-		
-		var output = '<img style="display: block; margin: 0 auto;" src="theme/images/wifi.png" border="0" /><br /><p id="sbNoWiFi">هذه الخدمة تتطلب اتصالاً بالإنترنت..<br /><a href="downloads.html"><img src="theme/images/downloads.png" border="0" style="padding-top: 8px;" /></a></p>';
-		document.getElementById('mainContent').innerHTML = output;
-		
-		} else {
 		
 		// Push Notifications DeviceReady
 		
@@ -88,14 +85,29 @@ function onDeviceReady() {
 		
 		// End of Push Notifications DeviceReady
 		
-		var headID = document.getElementsByTagName("head")[0];         
-		var newScript = document.createElement('script');  
-		newScript.type = 'text/javascript';
-		newScript.charset = 'utf-8';  
-		newScript.src = siteURL + 'external/media_mobile13.sb.php?ytID=' + getUrlVars()["ytID"] + '&ytC=' + getUrlVars()["ytC"];  
-		headID.appendChild(newScript);  
+		mediaID = getUrlVars()["id"];
 		
-		}		
+		var output_title = localStorage.getItem("mediaTitle" + mediaID);
+		var output_name = localStorage.getItem("mediaName" + mediaID);
+		var output_date = localStorage.getItem("mediaDate" + mediaID);
+		var output_file = localStorage.getItem("mediaLink" + mediaID);
+		var output_image = "theme/images/news-img-big.jpg";
+		
+		var output_share = output_title + "\\nالخطيب: " + output_name + "\\n\\n" + shareURL + "?id=" + mediaID + shareFooter;
+
+		document.getElementById('mainContent').innerHTML = '<article><h1><img src="theme/images/arrowright.png" onclick="history.back();" /> ' + output_title + '</h1><p>' + output_name + ' - ' + output_date + '</p><div style="direction: ltr; float: right;"><div id="myElement">جاري تحميل المشغّل...</div></div><div class="clear"></div><br /><p style="text-align: center;"><a href="#" onclick="deleteFile(); return false;">حذف المقطع</a> || <a href="javascript:;" onclick="window.plugins.socialsharing.share(' + "'" + output_share + "'" + ')">مشاركة المقطع</a></p><p id="downloadMSG" style="text-align: center;"></p></article>';
+
+		jwplayer("myElement").setup({
+			file: output_file,
+			image: output_image,
+			width: (window.innerWidth-40),
+			height: Math.round((window.innerWidth-40)*(9/16))
+		});
+		
+		window.onresize = function(event) {
+			jwplayer().resize((window.innerWidth-40),Math.round((window.innerWidth-40)*(9/16)));
+		}
+	
 	}
 	
 	// Push Notifications Functions
@@ -105,6 +117,28 @@ function onDeviceReady() {
 	// End of Push Notifications Functions
 	
 	document.addEventListener("deviceready", onDeviceReady, true);
+	
+function deleteFile(){
+
+mediaID = getUrlVars()["id"];
+
+mediaIDs = ';' + localStorage.getItem("downloaded") + ';';
+mediaIDs = mediaIDs.replace(';' + mediaID + ';', ';');
+mediaIDs = mediaIDs.substring(1, mediaIDs.length-1);
+
+localStorage.setItem("downloaded", mediaIDs);
+
+localStorage.removeItem("mediaTitle" + mediaID);
+localStorage.removeItem("mediaName" + mediaID);
+localStorage.removeItem("mediaImg" + mediaID);
+localStorage.removeItem("mediaLink" + mediaID);
+localStorage.removeItem("mediaDate" + mediaID);
+
+//document.getElementById('downloadMSG').innerHTML = '<img class="noborder" src="theme/images/tick.png" /> تم حذف المقطع بنجاح!';
+
+window.history.back();
+
+}
 	
    window.addEventListener("load",function() {
 	  // Set a timeout...
@@ -122,6 +156,7 @@ function onDeviceReady() {
    		$('.menu' ).hide();   
    		$('.options li:last-child').removeClass('active');
    });
+
 </script>
 </body>
 </html>

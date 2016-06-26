@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>استماع مقطع</title>
+  <title>التحميلات</title>
   <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0" /> 
   <link rel="stylesheet" media="all" href="css/style.css" type="text/css">
   <link rel="stylesheet" media="all" href="theme/customize.css" type="text/css">
@@ -56,8 +56,12 @@
 <script src="js/jquery.min.js"></script>
 <script type="text/javascript">
 
-	var pushNotification;
-	
+var pushNotification;
+var downloadArray;
+var downloadLength;
+var output_website = '<h2 class="underline"><img src="theme/images/arrowright.png" onclick="history.back();" /> التحميلات</h2>';
+var output_profilePic;
+
 function onDeviceReady() {
 
 	arrayLength = externalMenu.title.length;
@@ -74,54 +78,65 @@ function onDeviceReady() {
 	checkConnection();
 }
 
-    function checkConnection() {
-		if (navigator.connection.type == Connection.NONE){
-		
-		var output = '<img style="display: block; margin: 0 auto;" src="theme/images/wifi.png" border="0" /><br /><p id="sbNoWiFi">هذه الخدمة تتطلب اتصالاً بالإنترنت..<br /><a href="downloads.html"><img src="theme/images/downloads.png" border="0" style="padding-top: 8px;" /></a></p>';
-		document.getElementById('mainContent').innerHTML = output;
-		
-		} else {
-		
-		// Push Notifications DeviceReady
-		
-		$.getScript("js/push_deviceReady.js", function(){});
-		
-		// End of Push Notifications DeviceReady
-		
-		var headID = document.getElementsByTagName("head")[0];         
-		var newScript = document.createElement('script');  
-		newScript.type = 'text/javascript';
-		newScript.charset = 'utf-8';  
-		newScript.src = siteURL + 'external/media_mobile13.sb.php?ytID=' + getUrlVars()["ytID"] + '&ytC=' + getUrlVars()["ytC"];  
-		headID.appendChild(newScript);  
-		
-		}		
+function checkConnection() {
+	// Push Notifications DeviceReady
+	$.getScript("js/push_deviceReady.js", function(){});
+	// End of Push Notifications DeviceReady
+	
+	if (localStorage.getItem("downloaded") !== null) {
+	downloadArray = localStorage.getItem("downloaded").split(";");
+	downloadLength = downloadArray.length-1;
+	} else {
+	downloadLength = 0;
 	}
 	
-	// Push Notifications Functions
+	if (downloadLength > 0){
+		
+	for (index = 0; index < downloadLength; ++index) {
 	
-	$.getScript("js/push_functions.js", function(){});
+		if (navigator.connection.type == Connection.NONE){
+			output_profilePic = 'theme/images/thumb.jpg';
+		} else {
+			output_profilePic = localStorage.getItem("mediaImg" + downloadArray[index]);
+		}
 
-	// End of Push Notifications Functions
+		output_website += '<article class="underline"><div class="post-preview"><a href="localPlayer.html?id=' + downloadArray[index] + '"><img src="' + output_profilePic + '" /></a></div><div class="post-content"><h2><a href="localPlayer.html?id=' + downloadArray[index] + '">' + localStorage.getItem("mediaTitle" + downloadArray[index]) + '</a></h2><div class="date" style="width: 100px"><span style="width: 100%; text-align: center;">' + localStorage.getItem("mediaDate" + downloadArray[index]) + '</span></div></div><div class="clear"></div></article>';
+	}
 	
-	document.addEventListener("deviceready", onDeviceReady, true);
+	} else {
 	
-   window.addEventListener("load",function() {
-	  // Set a timeout...
-	  setTimeout(function(){
-	    // Hide the address bar!
-	    window.scrollTo(0, 1);
-	  }, 0);
-	});
-   $('.menu' ).hide();
-   $('.options li:last-child').click(function(){
-   		$(this).toggleClass('active');      			
-   		$('.menu').toggle();		
-   });
-   $('.content').click(function(){
-   		$('.menu' ).hide();   
-   		$('.options li:last-child').removeClass('active');
-   });
+	output_website += '<p style="color: #bbbbbb;">لا توجد مقاطع في مجلد التحميلات!</p>';
+	
+	}
+	
+	document.getElementById('mainContent').innerHTML = output_website;
+}
+
+// Push Notifications Functions
+
+$.getScript("js/push_functions.js", function(){});
+
+// End of Push Notifications Functions
+
+document.addEventListener("deviceready", onDeviceReady, true);
+
+window.addEventListener("load",function() {
+  // Set a timeout...
+  setTimeout(function(){
+	// Hide the address bar!
+	window.scrollTo(0, 1);
+  }, 0);
+});
+$('.menu' ).hide();
+$('.options li:last-child').click(function(){
+	$(this).toggleClass('active');      			
+	$('.menu').toggle();		
+});
+$('.content').click(function(){
+	$('.menu' ).hide();   
+	$('.options li:last-child').removeClass('active');
+});
+
 </script>
 </body>
 </html>
