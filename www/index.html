@@ -18,11 +18,7 @@
     });
     return vars;
 	}
-	
-	function openPage(newPage) {
-		location.href='index.html?c=' + getUrlVars()["c"] + '&page=' + newPage + '&articles=' + getUrlVars()["articles"];
-	}
-	
+		
 	function showImg(img){
 		var myImg = "";
 		if(img==""){
@@ -33,7 +29,7 @@
 		return myImg;
 	}
   </script>
-  
+
 </head>
 
 <body>
@@ -49,11 +45,6 @@
       <div class="clear"></div>
 	    <nav class="vertical menu">
 	    	<ul id="mainSbMenu">
-				<li><a href="news.html">الأخبار</a></li>
-				<li><a href="news.html?articles=1">المقالات</a></li>
-				<li><a href="gallery.html">معرض الصور</a></li>
-				<li><a href="media.html">مكتبة الميديا</a></li>
-				<li><a href="downloads.html">التحميلات</a></li>
         	</ul>
 	    </nav>
     </header>
@@ -68,14 +59,22 @@
   </div>
  
 <script src="js/jquery.min.js"></script>
+<script src="galleria/galleria-1.4.2.min.js"></script>
 <script type="text/javascript">
 
 var pushNotification;
 	
-function onDeviceReady() {
+/* function onDeviceReady() {
 
-	arrayLength = externalMenu.title.length;
+	navigator.splashscreen.hide();
+
+	arrayLength = internalMenu.title.length;
 	sbMenu = '';
+	for (i = 0; i < arrayLength; i++) {
+		sbMenu += '<li><a href="' + internalMenu.url[i] + '">' + internalMenu.title[i] + '</a></li>';
+	}
+	
+	arrayLength = externalMenu.title.length;
 	for (i = 0; i < arrayLength; i++) {
 		sbMenu += '<li><a href="#" onclick="window.open(\'' + externalMenu.url[i] + '\', \'_system\');return false;">' + externalMenu.title[i] + '</a></li>';
 	} 
@@ -102,79 +101,6 @@ function onDeviceReady() {
 		
 		// End of Push Notifications DeviceReady
 		
-		$.getScript(siteURL + 'external/index_mobile13.sb.php?id=' + getUrlVars()["id"] + '&c=' + getUrlVars()["c"] + '&page=' + getUrlVars()["page"] + '&articles=' + getUrlVars()["articles"], function(){
-			
-		var output = "";
-		
-		if(ads.length > 0 && localStorage.getItem('ad_' + ads[0].id) != '1'){
-		
-		output += '<div id="ads">' + ads[0].msg + '<a href="#" onclick="this.parentNode.style.display=\'none\';localStorage.setItem(\'ad_' + ads[0].id + '\',\'1\');return false;">[موافق]</a></div>';
-		
-		}
-		
-		if(news.length == 1){
-		
-			var articles = "news";
-			if(getUrlVars()["articles"] == 1){articles = "articles";}
-			output += '<article><h1> ' + news[0].title + '</h1><p>' + news[0].date + '</p><p id="myElement">';
-			if(news[0].img != ""){ output += '<img src="' + news[0].img + '" /><br />'; }
-			output += news[0].topic + '</p><div class="clear"></div><br /><p style="text-align: center;"><a href="#" onclick="window.open(\'' + siteURL + 'index.php?act=show' + articles + '&id=' + news[0].id + '\', \'_system\'); return false;">فتح في المتصفح</a> || <a href="javascript:;" onclick="window.plugins.socialsharing.share(\'' + news[0].title + "\\n\\n" + siteURL + 'index.php?act=show' + articles + '&id=' + news[0].id + shareFooter + '\')">نشر المقال</a></p></article>';
-		
-		}else{
-		
-		if(cats.length == 0 && content.length == 0){
-		
-			output += '<h2 class="underline">رسالة إدارية</h2><p class="serverMainColor">هذا القسم فارغ!</p>';
-		
-		}else{
-		
-		if(cats.length > 0){
-		
-			output += '<h2 class="underline">تعليم الخطابة</h2>';
-			for (i = 0; i < cats.length; i++) {
-				output += '<article class="underline"><div class="post-preview"><a href="news.html?c=' + cats[i].id + '&articles=' + getUrlVars()["articles"] + '"><img src="' + showImg(cats[i].img) + '" /></a></div><div class="post-content"><h2><a href="news.html?c=' + cats[i].id + '&articles=' + getUrlVars()["articles"] + '">' + cats[i].title + '</a></h2></div><div class="clear"></div></article>';
-			} 
-			
-			if(content.length > 0){ output += '<br />'; }
-			
-		}
-		
-		if(content.length > 0){
-		
-			output += '<h2 class="underline">';
-			
-			if(cats.length == 0){
-			output += '<img src="theme/images/arrowright.png" onclick="history.back();" />';
-			}
-
-			output += newsTitle + '</h2>';
-			for (i = 0; i < content.length; i++) {
-				output += '<article class="underline"><div class="post-preview"><a href="news.html?id=' + content[i].id + '&articles=' + getUrlVars()["articles"] + '"><img src="' + showImg(content[i].img) + '" /></a></div><div class="post-content"><h2><a href="news.html?id=' + content[i].id + '&articles=' + getUrlVars()["articles"] + '">' + content[i].title + '</a></h2><div class="date" style="width: 100px"><span style="width: 100%; text-align: center;">' + content[i].date + '</span></div></div><div class="clear"></div></article>';
-			} 
-			
-		}		
-		
-		}}
-		
-		if(pages > 0){
-		
-		output += '<br /><div style="text-align: center;"><label for="select-choice" class="inline serverMainColor">الصفحة:</label> <select name="select-choice" id="select-choice" onchange="openPage(this.options[this.selectedIndex].value);">';
-		
-		for (i = 1; i <= pages; i++) {
-			output += '<option value="' + i + '"';
-			if(i == getUrlVars()["page"]){ output += ' selected="selected"'; }
-			output += '> ' + i + ' </option>';
-		}
-						
-		output += '</select></div>';
-		
-		}
-			
-		
-		document.getElementById('mainContent').innerHTML = output;
-		
-	});
-		
 		}		
 	}
 	
@@ -184,7 +110,64 @@ function onDeviceReady() {
 
 	// End of Push Notifications Functions
 	
-	document.addEventListener("deviceready", onDeviceReady, true);
+	document.addEventListener("deviceready", onDeviceReady, true); */
+	
+	$.getScript(siteURL + 'external/index_mobile14.sb.php?id=' + getUrlVars()["id"] + '&c=' + getUrlVars()["c"] + '&page=' + getUrlVars()["page"] + '&articles=' + getUrlVars()["articles"], function(){
+			
+		var output = "";
+		
+		if(ads.length > 0 && localStorage.getItem('ad_' + ads[0].id) != '1'){
+		
+		output += '<div id="ads">' + ads[0].msg + '<a href="#" onclick="this.parentNode.style.display=\'none\';localStorage.setItem(\'ad_' + ads[0].id + '\',\'1\');return false;">[موافق]</a></div>';
+		
+		}
+		
+		output += '<h2 class="underline">جديدنا</h2>';
+		
+		for (i = 0; i < latest.length; i++) {
+			output += '<article class="underline"><div class="post-preview"><a href="' + latest[i].url + '"><img src="' + showImg(latest[i].img) + '" /></a></div><div class="post-content"><h2><a href="' + latest[i].url + '">' + latest[i].title + '</a></h2><p>' + latest[i].name + '</p><div class="date" style="width: 100px"><span style="width: 100%; text-align: center;">' + latest[i].date + '</span></div></div><div class="clear"></div></article>';
+		} 
+		
+		output += '<br />';
+		
+		for (i = 0; i < cats.length; i++) {
+		
+			output += '<h2 class="underline">' + cats[i].title + '</h2>';
+		
+			for (m = 0; m < cats[i].subs.length; m++) {
+				
+				output += '<article class="underline"><div class="post-preview"><a href="' + cats[i].subs[m].url + '"><img src="' + showImg(cats[i].subs[m].img) + '" /></a></div><div class="post-content"><h2><a href="' + cats[i].subs[m].url + '">' + cats[i].subs[m].title + '</a></h2>';
+				
+				if(cats[i].subs[m].description != ""){ output += '<p>' + cats[i].subs[m].description + '</p>'; }
+				
+				output += '</div><div class="clear"></div></article>';
+			}
+			
+			output += '<br />';
+		
+		}
+
+		if(gallery.length > 0){
+		
+			output += '<div id="galleria"></div>';
+		
+		}
+		
+		document.getElementById('mainContent').innerHTML = output;
+		
+		if(gallery.length > 0){
+		
+			// Load the classic theme
+			Galleria.loadTheme("galleria/galleria.classic.min.js");
+
+			// Initialize Galleria
+			Galleria.run("#galleria", {
+			dataSource: gallery,
+			fullscreenDoubleTap: false,
+			showCounter: false
+		});	}
+		
+	});
 	
    window.addEventListener("load",function() {
 	  // Set a timeout...
@@ -209,5 +192,12 @@ function onDeviceReady() {
 } */
 
 </script>
+<style>
+	.galleria-theme-classic .galleria-thumbnails-container{direction: ltr !important;}
+	.galleria-theme-classic .galleria-carousel .galleria-thumbnails-list{direction: ltr !important;}
+
+	/* This rule is read by Galleria to define the gallery height: */
+	#galleria{height:90vh;}
+</style>
 </body>
 </html>
