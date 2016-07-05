@@ -20,7 +20,7 @@
 	}
 	
 	function openPage(newPage) {
-		location.href='news.html?c=' + getUrlVars()["c"] + '&page=' + newPage + '&articles=' + getUrlVars()["articles"];
+		location.href='news.html?c=' + getUrlVars()["c"] + '&page=' + newPage + '&articles=' + getUrlVars()["articles"] + '&pass=' + getUrlVars()["pass"];
 	}
 	
 	function showImg(img){
@@ -112,6 +112,12 @@ function onDeviceReady() {
 		
 		}
 		
+		if(newsTitle == "PasswordProtected"){
+		
+			output += '<h2 class="underline"><img src="theme/images/arrowright.png" onclick="history.back();" />رسالة إدارية</h2><p class="serverMainColor">هذا المحتوى محمي بكلمة مرور!</p><form action="news.html" method="get" class="label-top"><div><label for="password">كلمة المرور:</label><input type="password" name="pass" id="password" value="" tabindex="1" /><input type="hidden" name="c" value="' + getUrlVars()["c"] + '"><input type="hidden" name="id" value="' + getUrlVars()["id"] + '"><input type="hidden" name="articles" value="' + getUrlVars()["articles"] + '"><input type="hidden" name="page" value="' + getUrlVars()["page"] + '"></div><div><input type="submit" value="تحديث" /></div></form>';
+
+		}else{
+		
 		if(news.length == 1){
 		
 			var articles = "news";
@@ -132,7 +138,7 @@ function onDeviceReady() {
 		
 			output += '<h2 class="underline"><img src="theme/images/arrowright.png" onclick="history.back();" />الأقسام الفرعية</h2>';
 			for (i = 0; i < cats.length; i++) {
-				output += '<article class="underline"><div class="post-preview"><a href="news.html?c=' + cats[i].id + '&articles=' + getUrlVars()["articles"] + '"><img src="' + showImg(cats[i].img) + '" /></a></div><div class="post-content"><h2><a href="news.html?c=' + cats[i].id + '&articles=' + getUrlVars()["articles"] + '">' + cats[i].title + '</a></h2></div><div class="clear"></div></article>';
+				output += '<article class="underline"><div class="post-preview"><a href="news.html?c=' + cats[i].id + '&articles=' + getUrlVars()["articles"] + '&pass=' + getUrlVars()["pass"] '"><img src="' + showImg(cats[i].img) + '" /></a></div><div class="post-content"><h2><a href="news.html?c=' + cats[i].id + '&articles=' + getUrlVars()["articles"] + '&pass=' + getUrlVars()["pass"] '">' + cats[i].title + '</a></h2></div><div class="clear"></div></article>';
 			} 
 			
 			if(content.length > 0){ output += '<br />'; }
@@ -149,7 +155,7 @@ function onDeviceReady() {
 
 			output += newsTitle + '</h2>';
 			for (i = 0; i < content.length; i++) {
-				output += '<article class="underline"><div class="post-preview"><a href="news.html?id=' + content[i].id + '&articles=' + getUrlVars()["articles"] + '"><img src="' + showImg(content[i].img) + '" /></a></div><div class="post-content"><h2><a href="news.html?id=' + content[i].id + '&articles=' + getUrlVars()["articles"] + '">' + content[i].title + '</a></h2><div class="date" style="width: 100px"><span style="width: 100%; text-align: center;">' + content[i].date + '</span></div></div><div class="clear"></div></article>';
+				output += '<article class="underline"><div class="post-preview"><a href="news.html?id=' + content[i].id + '&articles=' + getUrlVars()["articles"] + '&pass=' + getUrlVars()["pass"] '"><img src="' + showImg(content[i].img) + '" /></a></div><div class="post-content"><h2><a href="news.html?id=' + content[i].id + '&articles=' + getUrlVars()["articles"] + '&pass=' + getUrlVars()["pass"] '">' + content[i].title + '</a></h2><div class="date" style="width: 100px"><span style="width: 100%; text-align: center;">' + content[i].date + '</span></div></div><div class="clear"></div></article>';
 			} 
 			
 		}		
@@ -168,7 +174,7 @@ function onDeviceReady() {
 						
 		output += '</select></div>';
 		
-		}
+		}}
 			
 		
 		document.getElementById('mainContent').innerHTML = output;
